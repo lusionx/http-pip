@@ -46,7 +46,7 @@ interface Bind {
 }
 
 process.nextTick(async () => {
-    config = JSON.parse(readFileSync('./config.dev.json', { encoding: 'utf8' }))
+    config = JSON.parse(readFileSync(process.argv[2] || './config.dev.json', { encoding: 'utf8' }))
     createServer(listener).listen(config.port)
     console.log('listen http://127.0.0.1:' + config.port)
 })
