@@ -17,14 +17,15 @@ async function listener(req: IncomingMessage, res: ServerResponse) {
             return res.end()
         }
         if (!jwt) return end(401)
+        // 希望 jwtSrv 出错时会连带本服务也挂
         const resp = await axios.get<JwtUser>(config.jwtSrv.url, { params: { jwt } })
-        if (!resp.data.sub) return end(403)
-        if (!users.includes(resp.data.sub)) return end(403)
+        if (!resp.data.sub || !users.includes(resp.data.sub)) return end(403)
     }
+    console.log('body length', req.readableLength)
     const pxy = await pass({
         hostname, port, method, headers,
         path: url + oriLoc.search
-    })
+    }, req.readableLength ? req : undefined)
     res.writeHead(pxy.statusCode || 500, pxy.headers)
     pxy.pipe(res)
 }
