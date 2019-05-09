@@ -1,12 +1,31 @@
 import { RequestOptions, IncomingMessage, request } from "http"
 import * as Qs from 'querystring'
-import { URL } from "url";
+import { URL } from "url"
 import { Readable } from "stream"
 
 export function pass(opt: RequestOptions, stream?: Readable) {
-    return new Promise<IncomingMessage>((res) => {
+    return new Promise<IncomingMessage>((res, rej) => {
         const req = request(opt, res)
         stream ? stream.pipe(req) : req.end()
+        req.on('error', rej)
+    })
+}
+
+/**
+ * @deprecated
+ * @param url
+ * @param qs 忽略url自带的qs, 用此值
+ */
+function reqGetText<T>(url: string, qs?: any) {
+    const loc = new URL(url)
+    const { hostname, port } = loc
+    const path = qs ? [loc.pathname, '?', Qs.stringify(qs)].join('') : loc.pathname + loc.search
+    return new Promise<{ statusCode?: number, data: T }>((res, rej) => {
+        const req = request({ hostname, port, path }, (resp) => {
+            const data: string = resp.read().toString()
+            const { statusCode } = resp
+            res({ statusCode, data: JSON.parse(data) })
+        })
     })
 }
 

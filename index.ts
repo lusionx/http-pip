@@ -21,13 +21,20 @@ async function listener(req: IncomingMessage, res: ServerResponse) {
         const resp = await axios.get<JwtUser>(config.jwtSrv.url, { params: { jwt } })
         if (!resp.data.sub || !users.includes(resp.data.sub)) return end(403)
     }
-    console.log('body length', req.readableLength)
-    const pxy = await pass({
+    pass({
         hostname, port, method, headers,
         path: url + oriLoc.search
-    }, req.readableLength ? req : undefined)
-    res.writeHead(pxy.statusCode || 500, pxy.headers)
-    pxy.pipe(res)
+    }, req.readableLength ? req : undefined).then(pxy => {
+        res.writeHead(pxy.statusCode || 500, pxy.headers)
+        pxy.pipe(res)
+    }).catch((err: Error) => {
+        res.writeHead(502, {
+            'Content-Length': err.message.length,
+            'Content-Type': 'text/plain',
+        })
+        res.write(err.message)
+        res.end()
+    })
 }
 
 interface Bind {
