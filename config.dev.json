@@ -7,8 +7,13 @@
     },
     {
       "location": "/soc",
-      "pass": "http://127.0.0.1:5001/c/"
+      "pass": "http://127.0.0.1:5001/c/",
+      "users": ["lxing"]
     }
   ],
-  "pass": "http://127.0.0.1:5001"
+  "pass": "http://127.0.0.1:5001",
+  "jwtSrv": {
+    "fromQuery": "jwt",
+    "url": "http://127.0.0.1:50151"
+  }
 }
