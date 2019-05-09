@@ -1,0 +1,14 @@
+{
+  "port": 5000,
+  "rules": [
+    {
+      "location": "/soa",
+      "pass": "http://127.0.0.1:5001/a"
+    },
+    {
+      "location": "/soc",
+      "pass": "http://127.0.0.1:5001/c/"
+    }
+  ],
+  "pass": "http://127.0.0.1:5001"
+}
