@@ -13,12 +13,12 @@ const configSchema = {
             maximum: 65535,
         },
         pass: {
-            title: 'default proxy_pass',
+            title: 'default proxy_pass ignore path',
             type: 'string',
             pattern: '^http:\/\/'
         },
         rules: {
-            title: 'rule of proxy',
+            title: 'rules of proxy',
             type: 'array',
             minItems: 1,
             items: {
@@ -35,19 +35,50 @@ const configSchema = {
                         type: 'string',
                         pattern: '^http:\/\/'
                     },
+                    users: {
+                        title: "jwt sub value list",
+                        type: 'array',
+                        minItems: 1,
+                        items: {
+                            type: 'string',
+                            minLength: 3,
+                        }
+                    }
                 },
             },
+        },
+        jwtSrv: {
+            title: 'valid users of matched rule',
+            required: ['url'],
+            properties: {
+                fromQuery: {
+                    title: 'jwt key of query',
+                    type: 'string',
+                    minLength: 3,
+                },
+                fromHeader: {
+                    title: 'jwt key of header',
+                    type: 'string',
+                    minLength: 3,
+                },
+                url: {
+                    title: 'jwt service url, resp{sub, exp, iat}',
+                    type: 'string',
+                    pattern: '^http:\/\/'
+                },
+            }
         }
     }
 }
 
 
 process.nextTick(async () => {
-    console.log(process.argv)
     const config = JSON.parse(readFileSync(process.argv[2], { encoding: 'utf8' }))
     const res = validateResult(config, configSchema)
     if (!res.valid) {
         console.log(res)
+    } else {
+        console.log(process.argv[2], 'valid')
     }
 })
 

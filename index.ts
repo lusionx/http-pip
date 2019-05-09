@@ -2,7 +2,7 @@ import { createServer, IncomingMessage, ServerResponse } from 'http'
 import { readFileSync } from 'fs'
 import { URL } from 'url'
 import axios from 'axios'
-import { getJwtHeader, JwtUser, getJwtQuery, pass, Rule, passOption } from './lib'
+import { JwtUser, pass, Rule, passOption, JwtSrv, getJwtVal } from './lib'
 
 let config: Bind
 async function listener(req: IncomingMessage, res: ServerResponse) {
@@ -11,13 +11,7 @@ async function listener(req: IncomingMessage, res: ServerResponse) {
     const { hostname, port, url, users } = passOption(oriLoc.pathname, config.rules, config.pass)
     if (users && users.length && config.jwtSrv) {
         // 做jwt验证
-        let jwt: string = ''
-        if (!jwt && config.jwtSrv.fromHeader) {
-            jwt = getJwtHeader(config.jwtSrv.fromHeader, headers as any)
-        }
-        if (!jwt && config.jwtSrv.fromQuery) {
-            jwt = getJwtQuery(config.jwtSrv.fromQuery, oriLoc.search)
-        }
+        let jwt = getJwtVal(config.jwtSrv, oriLoc.search, headers)
         function end(code: number) {
             res.writeHead(code)
             return res.end()
@@ -39,11 +33,7 @@ interface Bind {
     port: number
     pass: string
     rules: Rule[]
-    jwtSrv: {
-        fromHeader: string
-        fromQuery: string
-        url: string
-    }
+    jwtSrv: JwtSrv
 }
 
 process.nextTick(async () => {

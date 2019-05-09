@@ -3,7 +3,7 @@ import * as Qs from 'querystring'
 import { URL } from "url";
 
 export function pass(opt: RequestOptions) {
-    return new Promise<IncomingMessage>((res, rej) => {
+    return new Promise<IncomingMessage>((res) => {
         const client = request(opt, res)
         client.end()
     })
@@ -19,6 +19,12 @@ export interface Rule {
     location: string
     pass: string
     users: string[]
+}
+
+export interface JwtSrv {
+    fromHeader: string
+    fromQuery: string
+    url: string
 }
 
 export function getJwtHeader(key: string, headers: Record<any, string>) {
@@ -37,6 +43,17 @@ export function getJwtHeader(key: string, headers: Record<any, string>) {
 export function getJwtQuery(key: string, search: string) {
     const v = Qs.parse(search ? search.slice(1) : '')[key] as string
     return v || ''
+}
+
+export function getJwtVal(jwtSrv: JwtSrv, search: string, headers: any) {
+    let jwt: string = ''
+    if (!jwt && jwtSrv.fromHeader) {
+        jwt = getJwtHeader(jwtSrv.fromHeader, headers)
+    }
+    if (!jwt && jwtSrv.fromQuery) {
+        jwt = getJwtQuery(jwtSrv.fromQuery, search)
+    }
+    return jwt
 }
 
 export function passOption(pp: string, rules: Rule[], pass: string) {
