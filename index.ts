@@ -1,62 +1,14 @@
-import { createServer, IncomingMessage, ServerResponse, request, RequestOptions } from 'http'
+import { createServer, IncomingMessage, ServerResponse } from 'http'
 import { readFileSync } from 'fs'
 import { URL } from 'url'
 import axios from 'axios'
-import * as Qs from 'querystring'
-
-
-function pass(opt: RequestOptions) {
-    return new Promise<IncomingMessage>((res, rej) => {
-        const client = request(opt, res)
-        client.end()
-    })
-}
-
-interface JwtUser {
-    sub: string
-    exp: number
-    iat: number
-}
-
-function getJwtHeader(key: string, headers: Record<any, string>) {
-    const v = headers[config.jwtSrv.fromHeader]
-    if (v) {
-        const bea = 'Bearer '
-        if (v.startsWith(bea)) {
-            return v.slice(bea.length)
-        } else {
-            return v
-        }
-    }
-    return ''
-}
-
-function getJwtQuery(key: string, search: string) {
-    const v = Qs.parse(search ? search.slice(1) : '')[key] as string
-    return v || ''
-}
+import { getJwtHeader, JwtUser, getJwtQuery, pass, Rule, passOption } from './lib'
 
 let config: Bind
 async function listener(req: IncomingMessage, res: ServerResponse) {
     const { headers, url: oriUrl, method } = req
     const oriLoc = new URL('http://127.0.0.1' + oriUrl)
-    const { hostname, port, url, users } = (function (pp: string) {
-        const mrl = config.rules.find(e => pp.startsWith(e.location))
-        const users = mrl ? mrl.users : []
-        if (mrl) {
-            const loc = new URL(mrl.pass)
-            const { hostname, port } = loc
-            let url = loc.pathname + pp
-            if (loc.pathname.endsWith('/')) {
-                url = loc.pathname.slice(0, -1) + pp.slice(mrl.location.length)
-            }
-            return { hostname, port, url, users }
-        } else {
-            const loc = new URL(config.pass)
-            const { hostname, port } = loc
-            return { hostname, port, url: pp, users }
-        }
-    })(oriLoc.pathname)
+    const { hostname, port, url, users } = passOption(oriLoc.pathname, config.rules, config.pass)
     if (users && users.length && config.jwtSrv) {
         // 做jwt验证
         let jwt: string = ''
@@ -86,11 +38,7 @@ async function listener(req: IncomingMessage, res: ServerResponse) {
 interface Bind {
     port: number
     pass: string
-    rules: {
-        location: string
-        pass: string
-        users: string[]
-    }[]
+    rules: Rule[]
     jwtSrv: {
         fromHeader: string
         fromQuery: string
