@@ -13,3 +13,4 @@ run/
 .vscode
 *.log
 *.csv
+jwtSrv/jwt-srv
