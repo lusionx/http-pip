@@ -1,0 +1,53 @@
+{
+  "port": 5000,
+  "rules": [
+    {
+      "location": "/jice",
+      "pass": "http://odata4-jice-svc/",
+      "users": [
+        "lxing"
+      ]
+    },
+    {
+      "location": "/mingpian",
+      "pass": "http://odata4-mingpian-svc/",
+      "users": [
+        "lxing"
+      ]
+    },
+    {
+      "location": "/tuice",
+      "pass": "http://odata4-tuice-svc/",
+      "users": [
+        "lxing"
+      ]
+    },
+    {
+      "location": "/tauth",
+      "pass": "http://odata4-tauth-svc/",
+      "users": [
+        "lxing"
+      ]
+    },
+    {
+      "location": "/wechat",
+      "pass": "http://odata4-tuice4wechat-svc/",
+      "users": [
+        "lxing"
+      ]
+    },
+    {
+      "location": "/soc",
+      "pass": "http://odata4-soc-new-svc/",
+      "users": [
+        "lxing"
+      ]
+    }
+  ],
+  "pass": "http://127.0.0.1",
+  "jwtSrv": {
+    "fromQuery": "jwt",
+    "fromHeader": "authorization",
+    "url": "http://tuice-jwt4tc-svc/"
+  }
+}
