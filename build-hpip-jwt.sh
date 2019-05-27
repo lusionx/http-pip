@@ -7,4 +7,4 @@ sed -i "" "s/1.0.0/${VERSION}/" k8s/package.json
 docker build -f k8s/Dockerfile -t hub.docker.admaster.co/tuice/hpip-jwt:${VERSION} .
 git checkout k8s/package.json
 
-# docker push hub.docker.admaster.co/tuice/tspp-egg:${VERSION}
+docker push hub.docker.admaster.co/tuice/hpip-jwt:${VERSION}
