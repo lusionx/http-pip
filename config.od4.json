@@ -38,13 +38,13 @@
     },
     {
       "location": "/soc",
-      "pass": "http://odata4-soc-new-svc/",
+      "pass": "http://odata4-soc-svc/",
       "users": [
         "lxing"
       ]
     }
   ],
-  "pass": "http://127.0.0.1",
+  "pass": "http://tuice-jwt4tc-svc",
   "jwtSrv": {
     "fromQuery": "jwt",
     "fromHeader": "authorization",

@@ -1,0 +1,31 @@
+{
+  "port": 5000,
+  "rules": [
+    {
+      "location": "/wx-tuice-task1",
+      "pass": "http://10.10.6.3:8080/",
+      "users": ["lxing"]
+    },
+    {
+      "location": "/wx-tuice-task2",
+      "pass": "http://10.10.6.4:8080/",
+      "users": ["lxing"]
+    },
+    {
+      "location": "/wx-tuice-task3",
+      "pass": "http://10.10.3.158:8080/",
+      "users": ["lxing"]
+    },
+    {
+      "location": "/wx-tuice-test1",
+      "pass": "http://10.10.6.6:8080/",
+      "users": ["lxing"]
+    }
+  ],
+  "pass": "http://127.0.0.1",
+  "jwtSrv": {
+    "fromQuery": "jwt",
+    "fromHeader": "authorization",
+    "url": "http://tuice-jwt4tc-svc/"
+  }
+}
